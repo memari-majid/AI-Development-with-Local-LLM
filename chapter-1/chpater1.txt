@@ -1,0 +1,843 @@
+Chapter 1: Getting started with
+Local LLM
+I still remember my summer vacation in Sharm-el-sheikh, Egypt, many years ago.
+This beautiful resort town is situated on the banks of the Red Sea. On the second day
+of my trip, I decided to take a swim in the sea and was amazed by the underwater
+world teeming with corals, fish, and other marine life. From that moment on, I fell
+in love with the sea. My friend and I were inspired to try scuba diving for the first
+time. We were both excited but also slightly apprehensive about the process.
+Our trainer noticed our fear, smiled, and said something that stayed with me:
+Underwater is another beautiful world. It may not be comfortable at first, but you
+have to try it to know if it’s yours or not. With his motivation, I took the plunge
+(literally!) and was hooked on diving from that day forward. Sadly, my friend
+couldn’t handle the ear pressure pain and never dove again. However, for me, that
+experience taught a valuable lesson: when faced with something new and daunting,
+just try it out first to see if it’s right for you.
+Why am I sharing this story? When I started learning Generative AI, I felt similarly
+overwhelmed by the fragmented information and warnings from others that it was
+very hard to learn and required top-notch hardware. But as soon as I found a clear
+study roadmap and tried my hand at applying it, I understood why it was mine –
+because I had taken the first step and made it my own.
+So, my advice is: just try out your first application or project in Generative AI, and
+see if it’s something you enjoy. If not, no worries! But if it sparks your interest, you’ll
+be hooked from there on.
+Anyway, in my opinion the best way to learn something new is to jump right in
+and start with a simple example to experiment with. By doing this, you’ll gain the
+necessary knowledge and become familiar with the most common aspects of the
+particular technology. Once you have a basic understanding of what you can do
+with it, you can always explore more details later.
+Chapter 1: Getting started with Local LLM 12
+As a starting point, this chapter provides basic instructions for installing the Ollama
+LLM runner. Later, we will discuss how to set up a local environment for Python so
+you can begin developing applications with an open-source local LLM.
+In a nutshell, the following topics are covered in this chapter.
+1. Tools and frameworks used in this book.
+2. Installing and setting up the LLM inference tool: Ollama.
+3. Installing a graphical user interface (GUI) client to work with Ollama.
+4. Configuring a Python environment for AI development.
+5. Hardware acceleration.
+Before we start
+Let’s explore why we chose to use a local Large Language Model (LLM) instead of
+a provider like OpenAI. There are four key reasons that summarize this decision:
+1. Fine-tuning: You may have complex use cases that require customizing the
+LLM model, which is easier to manage locally.
+2. Privacy and security: Your company might enforce strict policies against
+sharing proprietary code or sensitive information with third-party providers,
+due to potential risks of data collection and misuse.
+3. Global availability: In many countries, private or third-party LLM providers
+may not be accessible, making a local solution necessary.
+4. Cost-effectiveness: For large-scale, user-facing production services, you may
+need a cost-efficient solution based on your financial model.
+While some in the open-source community may view local LLM development as
+a fun and interesting hobby, our experience has shown that it’s also viable for
+business use cases. By choosing to host our own LLM locally, we can ensure that
+our needs are met while maintaining control over sensitive information.
+Chapter 1: Getting started with Local LLM Tools and frameworks used in this book
+13
+In this book, we will explore a variety of tools and frameworks that are essential
+for working with LLMs and artificial intelligence (AI) applications. These tools have
+been carefully selected based on their widespread use, robust features, and ability to
+handle the demanding computational requirements associated with AI development.
+By the end of this book, you will have a strong understanding of how to utilize these
+tools to create, fine-tune, and deploy AI models effectively.
+Python is the primary programming language used throughout this book, given its
+popularity in the AI community and the vast ecosystem of libraries and frameworks
+available. Python’s simplicity and readability make it an ideal choice for both
+beginners and experienced developers working with AI.
+For building, training and enrich LLM models, we will rely on powerful frameworks
+like Langchain, TensorFlow and PyTorch. These frameworks provide comprehensive
+tools for creating neural networks, running computations on GPUs for accelerated
+performance, and building custom AI solutions. They are highly flexible and have
+strong community support, making them indispensable for modern AI research and
+development. In particular, PyTorch’s dynamic computation graph and TensorFlow’s
+production-ready capabilities make them suitable for a wide range of applications,
+from academic research to industrial deployment.
+To handle natural language processing (NLP) tasks, we will use the Hugging Face
+Transformers library. This library provides access to pre-trained models and tools
+for fine-tuning state-of-the-art transformer models, such as BERT, GPT, and T5.
+Hugging Face’s intuitive interface and extensive documentation make it a go-to
+resource for working with LLMs, enabling developers to build sophisticated NLP
+applications with minimal effort.
+In addition to these core tools, we will explore frameworks like Ollama for setting
+up and managing local LLMs. Ollama simplifies the deployment of LLMs on
+local machines, offering a user-friendly interface for running models, managing
+dependencies, and optimizing performance. By using Ollama, developers can
+maintain control over their data and models, ensuring privacy and security while
+benefiting from the power of AI.
+Let’s summarize everything in a table.
+Chapter 1: Getting started with Local LLM 14
+Features Tools and framework
+LLM runner Ollama, Groq
+LLM Llama 3.1, codestral, Llava, Openjourney
+Programming language Python
+App developing Langchain, Vanna, CrewAI
+ML platform Hugging face
+Fine-tuning Pytorch
+Image processing Llava, Openjourney
+Together, these tools and frameworks provide a comprehensive toolkit for develop-
+ing, fine-tuning, and deploying AI models. Throughout this book, we will guide you
+step-by-step on how to integrate these tools into your projects, helping you unlock
+the full potential of AI and LLMs.
+Running an LLM locally requires sophisticated software components and hardware,
+including a multicore CPU, sufficient RAM, and possibly a GPU. This setup can be
+achieved on various platforms, such as a workstation, a home lab server, or a rented
+dedicated VPS from a provider like Amazon. When installing an LLM locally, several
+considerations must be taken into account.
+Components Description
+CPU Octa-core (minimum) Intel/AMD processor
+RAM Minimum 16 Gb
+OS Linux, MacOs
+Network Connected to internet
+Installing and setting up the local LLM
+inference
+As previously mentioned, our AI-related applications are built around Ollama, an
+open-source tool that efficiently manages LLMs. This versatile tool can be used to
+Chapter 1: Getting started with Local LLM 15
+run a wide range of LLMs locally. One key advantage of Ollama over other tools
+like LM Studio is its exceptional performance: it is fast and has a small memory
+footprint. Additionally, Ollama provides a necessary API for interacting with it,
+making integration into your system easy.
+For our local inference needs, we will be using an open-source LLM in conjunction
+with Ollama. This combination will enable us to leverage the full potential of Ollama
+while ensuring seamless and efficient inference operations.
+Ollama can be tried in various ways, depending on your desired level of involvement
+and interest. For a quick start, you can try using the binary distribution, or if
+you prefer to have more control, you can build Ollama from its source code. In
+this section, we will guide you through the installation process using the binary
+distribution.
+Step 1: Download and Install Ollama.
+• Visit the Ollama website to download the latest version of the Ollama installer
+for your operating system. Look for a direct download link or an installation
+guide.
+• For macOS: Open the downloaded file and follow the on-screen instructions to
+install Ollama on your system. This typically involves dragging the application
+to the Applications folder on macOS.
+• For Linux:
+– execute the command curl -fsSL https://ollama.com/install.sh | sh
+– After successful installation, you should see an output similar to the one
+shown below.
+Chapter 1: Getting started with Local LLM 16
+>>> Making ollama accessible in the PATH in /usr/local/bin
+>>> Adding ollama user to render group...
+>>> Adding ollama user to video group...
+>>> Adding current user to ollama group...
+>>> Creating ollama systemd service...
+>>> Enabling and starting ollama service...
+>>> The Ollama API is now available at 127.0.0.1:11434.
+>>> Install complete. Run "ollama" from the command line.
+WARNING: No NVIDIA/AMD GPU detected. Ollama will run in CPU-only mode.
+• For Windows: At the time of writing this book, Ollama is available as a preview
+version specifically for the Windows operating system.
+• For Docker: Make sure that, your Docker instance is up and running. Execute
+the following command to run Ollama inside a Docker container.
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama olla\
+ma/ollama
+Once installed, you can verify the installation by opening a terminal and running the
+following command:
+ollama --version
+This command should display the current version of Ollama installed on your
+machine, confirming that the installation was successful.
+Warning: could not connect to a running Ollama instance
+Warning: client version is 0.3.6
+The output above indicates that the Ollama instance is not running and the client
+version is 0.3.6
+Step 2: Start the Ollama instance.
+There are two easy steps to start an Ollama instance:
+• To start an Ollama instance without LLM, use the following command:
+Chapter 1: Getting started with Local LLM 17
+ollama serve
+This command initializes the Ollama server, allowing it to run and manage LLMs
+locally. The output should be similar to what is shown below.
+2024/08/27 15:17:09 routes.go:1125: INFO server config env="map[OLLAMA_\
+DEBUG:false OLLAMA_FLASH_ATTENTION:false OLLAMA_HOST:http://127.0.0.1:1
+1434 OLLAMA_KEEP_ALIVE:5m0s OLLAMA_LLM_LIBRARY: OLLAMA_MAX_LOADED_MODEL
+S:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/Users/shamim/.ollama/models OLL
+AMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:0 OLLAMA_O
+RIGINS:[http://localhost https://localhost http://localhost:* https://l
+ocalhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https:
+//127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0
+.0.0.0:* app://* file://* tauri://*] OLLAMA_RUNNERS_DIR: OLLAMA_SCHED_S
+PREAD:false OLLAMA_TMPDIR:]"
+time=2024-08-27T15:17:09.034+03:00 level=INFO source=images.go:782 msg=\
+"total blobs: 10"
+time=2024-08-27T15:17:09.036+03:00 level=INFO source=images.go:790 msg=\
+"total unused blobs removed: 0"
+time=2024-08-27T15:17:09.037+03:00 level=INFO source=routes.go:1172 msg\
+="Listening on 127.0.0.1:11434 (version 0.3.6)"
+time=2024-08-27T15:17:09.038+03:00 level=INFO source=payload.go:30 msg=\
+"extracting embedded files" dir=/var/folders/lj/qs6zzt3j7jvb5yrh4x1x39x
+00000gn/T/ollama883440228/runners
+time=2024-08-27T15:17:09.087+03:00 level=INFO source=payload.go:44 msg=\
+"Dynamic LLM libraries [cpu cpu_avx cpu_avx2]"
+time=2024-08-27T15:17:09.087+03:00 level=INFO source=types.go:105 msg="\
+inference compute" id="" library=cpu compute="" driver=0.0 name="" tota
+l="16.0 GiB" available="6.3 GiB"
+• To start an Ollama instance with a LLM. Use the following command to start
+Ollama instance with model Llama3.1:
+Chapter 1: Getting started with Local LLM 18
+ollama run llama3.1
+This command will pull the llama3.1 8b model from the repository, start an Ollama
+server, and load the llama3.1 model for processing queries or tasks locally. The
+following output shows the result of Ollama pulling and loading the LLM llama3.1.
+ollama run llama3.1buj
+pulling manifest
+pulling 8eeb52dfb3bb... 100% ￿￿￿￿￿￿￿￿￿￿ ￿ 4.7 GB/4.7 GB 2.7 MB/s \
+0s
+pulling 11ce4ee3e170... 100% ￿￿￿￿￿￿￿￿￿￿￿￿ 1.7 KB
+pulling 0ba8f0e314b4... 100% ￿￿￿￿￿￿￿￿￿￿￿￿ 12 KB
+pulling 56bb8bd477a5... 100% ￿￿￿￿￿￿￿￿￿￿￿￿ 96 B
+pulling 1a4c3c319823... 100% ￿￿￿￿￿￿￿￿￿￿￿￿ 485 B
+verifying sha256 digest
+writing manifest
+removing any unused layers
+success
+>>> Send a message (/? for help)
+The entire list of models supported by Ollama is available here.
+Info
+Please note that, running a LLM locally requires sufficient RAM. Specifi-
+cally: for 7B models, at least 8 GB of free RAM is required, for 13B models,
+16 GB of free RAM is recommended and for 33B models, 32 GB of free RAM
+is necessary.
+Ollama will only pull a model during its initial setup. Subsequent runs of the
+command ollama run llama3.1 will use the locally cached LLM, rather than pulling
+it from the repository.
+Now that the LLM is set up, you can interact with it by sending messages or chatting
+with it. Try typing something like tell me a joke to get started.
+Chapter 1: Getting started with Local LLM 19
+At this moment, executing the command ollama ps in another terminal window will
+produce a similar output to what is shown below.
+NAME ID SIZE PROCESSOR UNTIL
+llama3.1:latest 91ab477bec9d 6.2 GB 100% CPU 4 minutes from now
+If you have a GPU-enabled system, the output should look something like this:
+NAME ID SIZE PROCESSOR UNTIL
+llama3.1:latest 62757c860e01 6.7 GB 100% GPU 4 minutes from now
+To exit the chat, simply type /bye in the command line. This will not only end the
+conversation but also stop the currently running LLM.
+Let’s summarize the difference between the two commands: ollama serve and
+ollama run llama3.1.
+The command ollama serve starts the Ollama instance but does not initialize any
+specific LLM. It sets up the server, making it ready to handle requests, but leaves
+the choice of which model to use to subsequent commands. On the other hand,
+the command ollama run llama3.1 does both: it starts the Ollama server and
+immediately initializes the llama3.1 model. This command sets up the server and
+loads the specified model for processing queries or tasks locally.
+Useful commands and interfaces
+Here are some useful Ollama commands which provides basic control over the
+Ollama system, allowing you to check on its status or shut it down when you’re
+finished using it.
+• ollama list-models: Lists all available models that can be used with Ollama.
+This command helps you view which models are installed and ready for use.
+• ollama pull <model_name>: Downloads the specified model (e.g., llama3.1)
+from the repository to your local system. Use this command to obtain models
+that are not yet installed.
+• ollama rm llama3.1: Remove a LLM from the local repository.
+Chapter 1: Getting started with Local LLM 20
+• ollama create <model_name>: Creates a new model from a specified GGUF
+Modelfile. Use this command to initialize and set up a model based on the
+configuration and parameters defined in the Modelfile. This is useful for
+creating custom models tailored to specific tasks or datasets. To that:
+– Download a pre-trained Large Language Model (LLM) file in the
+GGUF format from Hugging Face or another source - for example,
+llama-3-sqlcoder-8b-Q6_K.gguf. Save this file to a specific directory on
+your computer.
+– Next, create a new text file called Modelfile within the same
+directory. Inside the Modelfile, add the following line of code:
+FROM ./llama-3-sqlcoder-8b-Q6_K.gguf.
+– Finally, navigate back to your terminal and run the command ollama
+create llama-sqlcoderq6 -f Modelfile from within the same directory.
+– After a while, you should see Ollama create and configure a new LLM
+model for you to work with.
+Ollama provides a useful REST API for interacting with and managing models. To
+use the REST API, you need to have CURL or WGET installed in your terminal, or you
+can use any REST client like Postman.
+• To load a model, execute the following request:
+curl http://localhost_OR_IP_ADDRESS:11434/api/generate -d '{
+"model": "gemma2"
+}'
+• To getting a list of models that are currently loaded into memory:
+curl http://localhost_OR_IP_ADDRESS:11434/api/ps
+• To generate a Stream request:
+Chapter 1: Getting started with Local LLM 21
+curl http://localhost_OR_IP_ADDRESS:11434/api/generate -d '{
+"model": "llama3",
+"prompt": "Tell me a joke"
+}'
+The response should be return as a stream. The complete REST API documentation
+can be found here.
+Additional setup
+If you’re running Ollama on a Linux system, such as Ubuntu, there’s an essential
+command you’ll want to know:
+• systemctl stop ollama.service: This command stops the ollama.service using
+the systemctl command, which is part of the system and service manager on
+Linux-based systems. By executing this command, you terminate the Ollama
+service that is currently running. It is more commonly used in environments
+where Ollama is set up as a systemd service.
+• systemctl disable ollama.service: This command disables the
+ollama.service, preventing it from starting automatically during the system
+boot. Disabling the service is useful if you want to stop Ollama from running
+on startup, allowing for manual control over when and how the service is
+launched.
+• systemctl status ollama.service: This command checks and displays the
+current status of the ollama.service. It provides information on whether the
+service is active, inactive, running, or stopped.
+• sudo journalctl -u ollama.service > ollama_logs.txt: This command uses
+journalctl to fetch the logs for the ollama.service and redirects the output
+into a file named ollama_logs.txt.
+These commands are essential for managing the Ollama service effectively, allowing
+you to start, stop, disable, and check the status of the service as needed. They provide
+a structured way to control the behavior of Ollama in a production or development
+environment.
+Chapter 1: Getting started with Local LLM 22
+Uninstall LLM inference
+If you need to remove Ollama runner from your Linux system or start fresh with a
+new installation, follow these steps:
+• Stop the Ollama server: systemctl stop ollama.service.
+• Disable the Ollama service: systemctl disable ollama.service.
+• Remove the service file: sudo rm /etc/systemd/system/ollama.service.
+• Delete the Ollama binary distribution: sudo rm $(which ollama).
+• Remove the downloaded models: sudo rm -r /usr/share/ollama.
+• Optionally you can also delete the Ollama user and group: sudo userdel ollama
+sudo groupdel ollama.
+The above commands should successfully uninstall Ollama from your Linux system.
+If you decide to reinstall the Ollama runner in the future, refer to the section on
+Installing and Setting up the Local LLM Inference for step-by-step instructions.
+For macOS users, two manual steps are required to fully remove Ollama:
+• Firstly, delete the Ollama application from your Applications folder.
+• Secondly, delete the .ollama folder from your user directory to erase all
+downloaded LLMs.
+Installing a graphical user interface (GUI)
+client to work with local LLM
+So far, you have set up your local LLM inference and can use the LLM through
+the command prompt or REST API. However, using these methods might not be
+very convenient. Fortunately, the LLM community and enthusiasts have developed
+many web, desktop, and command-line client tools to simplify the process. To learn
+more about the various tools available to simplify your interaction with LLMs, be
+sure to check out the Community Integration section on the Ollama GitHub page.
+There, you’ll find a comprehensive list of web, desktop, and command-line client
+tools created by the LLLM community.
+Chapter 1: Getting started with Local LLM 23
+For clarity, let’s proceed by installing the very first tool (Open WebUI) listed in the
+‘Community Integration’ section of the Ollama GitHub page. This will allow us to
+demonstrate how to integrate these community-created tools into our workflow and
+explore their capabilities.
+The key features of Open WebUI are listed on this page. In a nutshell, Open WebUI
+provides a rich web interface similar to ChatGPT. With Open WebUI, you can
+connect to any LLM service, whether it’s local Ollama or a third-party service like
+OpenAI.
+To install the Open WebUI do the following:
+• First, make sure Docker is installed and set up on your system.
+• If you want to install Open WebUI on the same machine where Ollama is
+running, use this command:
+docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway\
+-v open-webui:/app/backend/data --name open-webui --restart always ghc
+r.io/open-webui/open-webui:main
+• If you want to install Open WebUI on a different machine and use Ollama as
+a service, execute the following command:
+docker run -d -p 3000:8080 -e OLLAMA_BASE_URL=https://IP_ADDRESS_OF_OLL\
+AMA_SERVER -v open-webui:/app/backend/data --name open-webui --restart
+always ghcr.io/open-webui/open-webui:main
+After installation, The Open WebUI web interface can be accessed at http://IP_-
+ADDRESS_OPENWEB:3000.
+Now that you’ve completed this step, you can create a new chat in the web interface
+and begin working with the LLM running on Ollama.
+Chapter 1: Getting started with Local LLM 24
+Info
+Throughout this book, we don’t use any tools like Open WebUI to work with
+the LLM. However, we may consider removing this subsection in future
+editions of the book.
+Configure a Python virtual environment for AI
+development
+Until now, we’ve set up a local inference environment that allows you to interact
+directly with the LLM. You can use this environment to ask questions, summarize
+documents, process images, and even more. However, it’s not sufficient for
+developing applications based on the LLM. To take your development to the next
+level, just like studying a programming language requires a compiler or interpreter,
+you’ll need a similar toolset to develop applications with the LLM. Specifically:
+• You’ll need a compiler or interpreter for our chosen programming language
+(which we’ve decided will be Python).
+• You’ll also require an Integrated Development Environment (IDE) for writing
+and compiling code.
+Don’t worry; installing Python is relatively straightforward. It’s often pre-installed
+on Linux and macOS systems, so you might already have it. However, we
+recommend not using the system-installed Python for developing our application.
+This is because modifying or updating system libraries can potentially exploit your
+operating system, requiring a full reinstall. To avoid this risk, we’ll use a separate
+installation of Python and setup an environment specifically for our development
+purposes. We’ll guide you through the installation process in the next steps.
+Install Python 3
+To install Python 3 on macOS and Linux, you can follow the steps below:
+Installing Python 3 on macOS:
+Chapter 1: Getting started with Local LLM • Check if Python is already installed. Open the Terminal and type:
+25
+python3 --version
+If Python 3 is installed, you’ll see the version number. If not, proceed with the
+installation.
+• Install Python 3 using Homebrew. Homebrew is a popular package manager
+for macOS. Execute the following command to install Python 3 by Homebrew:
+brew install python
+• After installation, verify that Python 3 is installed by checking the version again:
+python3 --version
+Installing Python 3 on Linux:
+• Update the package list. Open a Terminal window and update your package
+list:
+sudo apt update
+• Install Python 3. For Debian-based systems like Ubuntu, use:
+sudo apt install python3
+• Verify the installation. Check if Python 3 is installed by running:
+Chapter 1: Getting started with Local LLM 26
+python3 --version
+These steps will get Python 3 installed on both macOS and Linux systems. After
+installation, you can use python3 to run Python scripts.
+Install Python package manager pip3
+Python pip3 is a package installer for Python. It’s used to install, update, and manage
+third-party packages (also known as libraries or modules) written in Python. To
+install the Python package manager pip3 on macOS and Linux, follow these steps:
+Installing pip3 on macOS:
+• Check if pip3 is already installed. Open the Terminal and type:
+pip3 --version
+If it’s already installed, you’ll see the version number.
+• Install pip3 using Homebrew. If pip3 isn’t installed, and you have Homebrew
+installed, you can install pip3 by installing Python 3 (since pip3 comes bundled
+with Python 3):
+brew install python
+Installing pip3 on Linux:
+• Update the package list. Open a Terminal window and update your package
+list:
+sudo apt update
+• Install pip3. For Debian-based systems like Ubuntu, use:
+Chapter 1: Getting started with Local LLM 27
+sudo apt install python3-pip
+• Verify the installation. Check if pip3 is installed by running:
+pip3 --version
+Alternative Installation Method: Using get-pip.py
+If pip3 is not available in your package manager, you can use the get-pip.py script
+to install it manually:
+• Download “get-pip.py“‘:
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+• Run the script with Python 3:
+python3 get-pip.py
+• Verify the installation:
+pip3 --version
+Following these steps, you should be able to install pip3 on both macOS and Linux,
+making it easier to manage Python packages in your projects.
+Chapter 1: Getting started with Local LLM 28
+Installing and configuring Miniconda
+Conda is a powerful package manager and environment management system for
+Python and other programming languages. Here’s a step-by-step guide to installing
+and configuring Conda on macOS. For Debian-based operating systems, such as
+Ubuntu, you can follow a similar process using the command sudo apt-get install
+in your terminal.
+Step 1: Download the Miniconda Installer.
+1. Choose the appropriate Miniconda installer:
+• Visit the Miniconda download page and choose the macOS installer for
+Python 3.
+• Download the .pkg installer for macOS.
+Step 2: Install Miniconda.
+1. Run the installer:
+• Locate the downloaded .pkg file (usually in your Downloads folder) and
+double-click it to run the installer and follow the installation prompts to
+install Miniconda.
+2. Complete the installation:
+• After the installation completes, you should see a confirmation screen.
+Click Close to exit the installer.
+Step 3: Verify the Installation
+1. Verify the Conda installation:
+• Type the following command in the Terminal and press Enter:
+Chapter 1: Getting started with Local LLM 29
+conda --version
+• You should see the version of Conda that you installed, indicating that the
+installation was successful.
+2. Optional Step: You can customize your Conda experience by setting the
+CONDA_HOME environment variable to point to the Miniconda installation
+directory.
+export CONDA_HOME=/opt/miniconda3
+export PATH="$CONDA_HOME/bin:$PATH"
+By default, when you install Miniconda, it will be located in: /opt/miniconda3.
+Step 4: Initialize Conda
+1. Initialize Conda for your shell:
+• Run the following command in the Terminal to initialize Conda:
+conda init
+• This command configures your shell to use Conda.
+2. Restart your Terminal:
+• Close and reopen your Terminal to apply the changes.
+Step 5: Create and Manage Conda Environments
+1. Create a new environment:
+• To create a new Conda environment, use the following command:
+conda create --name ai_book_env
+• ai_book_env will be our enviroment for developing applications.
+2. Activate the environment:
+• To activate the environment, use the following command:
+Chapter 1: Getting started with Local LLM 30
+conda activate ai_book_env
+3. Deactivate the environment:
+• To deactivate the environment, use the following command:
+conda deactivate
+Step 6: Additional Configuration (Optional)
+1. Configure Conda channels:
+• Conda uses channels to find packages. You can add additional channels if
+needed. For example, to add the conda-forge channel:
+conda config --add channels conda-forge
+2. Update Conda:
+• It’s a good idea to keep Conda up to date. You can update Conda with the
+following command:
+conda update conda
+By following these steps, you should have Conda installed and configured on your
+macOS system, ready to manage environments and packages efficiently.
+Install IDE: Jupyter lab and notebook
+JupyterLab (formerly known as iPython Notebook) is an interactive programming
+environment that allows you to create and share documents containing live code,
+equations, visualizations, and narrative text. This powerful tool is widely used by
+machine learning engineers to develop applications related to Artificial Intelligence
+(AI).
+You can install Jupyter lab directly through pip3 package manager. However, we are
+going to use Miniconda to install it. To install JupyterLab using Miniconda, you can
+follow these steps:
+1. Create a new conda environment (optional but recommended): It’s a best
+practice to create a separate environment for each project. You can create a new
+environment for JupyterLab with a specific Python version as shown below:
+Chapter 1: Getting started with Local LLM 31
+conda create -n jupyterlab-env python=3.11
+Replace 3.11 with the version of Python you wish to use. When prompted, type y to
+proceed with the installation.
+2. Activate the new environment: Once the environment is created, activate it
+by the following bash command.
+conda activate jupyterlab-env
+Replace jupyterlab-env with your environment name if you used a different name.
+3. Install JupyterLab: Now, install JupyterLab in the activated environment:
+conda install -c conda-forge jupyterlab
+This command installs JupyterLab and its dependencies from the conda-forge
+channel, which is a widely used community-maintained channel for conda packages.
+4. Launch JupyterLab: After the installation is complete, you can start Jupyter-
+Lab by typing:
+jupyter lab
+When you run the command to launch Jupyter Lab, it will automatically open in
+your default web browser. If this doesn’t happen, don’t worry! You can manually
+open Jupyter Lab by copying and pasting the URL from the Miniconda console (see
+figure 1.1) into your preferred web browser.
+Chapter 1: Getting started with Local LLM 32
+Figure 1.1
+Following these steps will set up JupyterLab in a conda environment, allowing you
+to work efficiently with Python notebooks and other data science tools.
+Now that we’ve completed our setup, create a new Jupyter Notebook and write some
+Python code using the print function to test your environment as shown below:
+print("Hello world")
+Install and configure SQLLite database
+Throughout this book, we’ve used SQLite as our example database several times.
+While you can use any database system to run the examples, we highly recommend
+using SQLite because it makes navigating the programming code much easier.
+To install SQLite3 on macOS and Debian based OS, follow the steps below:
+Installing SQLite3 on macOS:
+• Install SQLite3 using Homebrew. You can install SQLite3 by running:
+brew install sqlite
+• Set environment variables. Follow the instructions provided by the console,
+and add any necessary environment variables to your ~/.bash_profile file.
+Chapter 1: Getting started with Local LLM 33
+export LDFLAGS="-L/opt/homebrew/opt/sqlite/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/sqlite/include"
+export PYTHON_CONFIGURE_OPTS="--enable-loadable-sqlite-extensions"
+• Verify the installation. After installation, check if SQLite3 is installed by typing:
+sqlite3 --version
+Installing SQLite3 on Debian based OS:
+• Update the package list. Open a Terminal window and update your package list
+to ensure you have the latest information on available packages:
+sudo apt update
+• Install SQLite3. Run the following command to install SQLite3:
+sudo apt install sqlite3
+If you want a graphical user interface to manage your SQLite databases, you can use
+DBeaver or DB Browser for SQLite.
+Additional setups
+Almost done! We’re just a few steps away from completing our setup.
+As we mentioned earlier, throughout this book, we will use third-party services
+like Hugging Face, Groq multiple times to access models and uses API’s. To use
+these services, we need tokens for authentication and authorization. Let’s create the
+necessary tokens now to complete the preparation stage. If you already have the
+required tokens, feel free to skip ahead as usual.
+We have to need Access Tokens, API keys from the following services:
+Chapter 1: Getting started with Local LLM 34
+1. Hagging face Access Tokens.
+2. Groq API Keys.
+3. LangSmith API Keys.
+The process of creating access tokens or API keys for various services is straightfor-
+ward and consistent across most platforms. Here’s a top-level overview of the token
+creation process:
+• Sign Up to the service with email or Google/Apple account.
+• Access to your Account Settings.
+• Navigate to the Access Tokens or API Keys Section.
+• Create or generate a New Access Token or API Keys.
+Once you’ve created your access tokens or API keys, save them securely in your
+file system for future use. Alternatively, you can also store these credentials as
+environmental variables, which will allow you to avoid entering them manually
+every time:
+export HF_TOKEN=YOUR_HUGGINGFACE_TOKEN_GOES_HERE
+export LANGCHAIN_API_KEY=YOUR_LANGCHAIN_API_KEY_GOES_HERE
+export GROQ_API_KEY=YOUR_GROQ_API_KEY_GOES_HERE
+That’s all! You’re now prepared to take the next step into the exciting world of
+Artificial Intelligence (AI) programming.
+Develop your first application with local LLM
+Now that we’ve completed our Large Language Model (LLM) inference and environ-
+ment setup, we’re ready to move on to developing a simple Python program using
+our local LLM. The primary objective of these exercises is to ensure that our entire
+setup, including local LLM inference, is working correctly. First and foremost, we
+want to verify that everything is functioning as expected.
+For this exercise, we’ll be using Ollama’s native Python API to keep things simple
+and straightforward.
+Step 1: Before proceeding, ensure that your Ollama Runner is up and running with
+an LLM model loaded. If not, execute the following command in your terminal:
+Chapter 1: Getting started with Local LLM 35
+ollama run llama3.1:latest
+Step 2: Activate the Miniconda environment named jupyterlab-env using the
+following command:
+conda activate jupyterlab-env
+Step 3: Start the Jupyter lab by typing the next command:
+jupyter lab
+Step 4: Create a new Notebook on Jupyter.
+Step 5: Rename the file HelloWorld.
+Step 6: In the Jupyter Notebook, add the following Python code:
+!pip install ollama
+import ollama
+from ollama import chat
+messages = [
+{
+'role': 'user'
+,
+'content': 'Write a python program to calculate factorial'
+,
+},
+]
+from ollama import Client
+client = Client(host='http://IP_ADDRESS:11434')
+response = client.chat(model='llama3.1', messages=messages)
+print(response['message']['content'])
+The Python code is using the ollama library to interact with a chat-based AI model
+named llama3.1. Below is a step-by-step explanation of what each part of the code
+does:
+Chapter 1: Getting started with Local LLM 36
+• The !pip install ollama command is used to install the ollama Python
+package. The exclamation mark ! at the beginning indicates that this is a shell
+command, which is commonly used in Jupyter notebooks. The ollama package
+likely provides functionality to interact with AI models.
+• import ollama: This line imports the ollama module, making all of its functions
+and classes available to use in the script.
+• from ollama import chat: This line imports the chat function specifically
+from the ollama module, allowing you to use it directly without prefixing it
+with ollama.
+• messages: A list named messages is defined with a single dictionary inside it.
+This dictionary represents a message that will be sent to the AI model. The key
+role indicates the role of the message sender, which is user in this case. The
+key content contains the actual text message: Write a python program to
+calculate factorial. This is the prompt that we are asking the AI model to
+generate Python code for calculating factorial.
+• from ollama import Client: This line imports the Client class from the ollama
+module.
+• client = Client(host='http://IP_ADDRESS:11434'): Here, we create an
+instance of the Client class, specifying the host URL of the LLM runner.
+If you’re using a local Ollama Runner in the same host as your Python
+environment, you can use localhost.
+Info
+In this example, we’re using a custom Client instance with explicit host
+specification to connect to an LLM (remote) runner. This code will work
+regardless of the Ollama runner topology: local or remote.
+• print(response['message']['content']): This line prints the content of the
+AI model’s response to the console. In this case, you should see a working
+implementation of the Snake game printed out in Python code..
+• Run the notebook by clicking the button Restart the kernel and run all
+cells.
+Chapter 1: Getting started with Local LLM 37
+After running the llama3.1 model for a bit, you should see a Python program output
+that looks something like this:
+def factorial(n):
+"""
+Calculate the factorial of a number.
+Args:
+n (int): The input number.
+Returns:
+int: The factorial of the input number.
+"""
+if not isinstance(n, int):
+raise TypeError("Input must be an integer.")
+if n < 0:
+raise ValueError("Input must be non-negative.")
+elif n == 0 or n == 1:
+return 1
+else:
+result = 1
+for i in range(2, n + 1):
+result *= i
+return result
+# Example usage
+print(factorial(5)) # Output: 120
+You can copy and paste the above code into another Jupyter Notebook and attempt to
+run. The program should return Output:120. Don’t worry if it doesn’t work, getting
+the calculator programming code from the llama3.1model is what matters. If you’re
+able to retrieve this code, it indicates that everything is working fine and your setup
+has passed a basic (smoke) test. The source code of the notebook is available here.
+Chapter 1: Getting started with Local LLM 38
+Troubleshooting
+When working with the Python code involving the ollama library as shown before,
+you might encounter several common errors. Here are some possible issues and their
+explanations:
+• ConnectError: [Errno 61] Connection refused:
+– Cause: This error happens if the server at the specified host address is not
+running, is down, or the IP address/port is incorrect.
+– Solution: Verify that the server is running at the given IP address and port.
+Ensure that you are using the correct host address and port.
+• ResponseError: model "XYZ" not found, try pulling it first
+– Cause: The specified model (XYZ) may not be available on the server.
+– Solution: Check if the model name is correct. Verify that the model is
+loaded and available on the server.
+These errors and issues can arise due to configuration problems, incorrect usage of
+the ollama library, network connectivity issues, or unexpected responses from the
+server. To avoid these issues, make sure you’re using the correct configuration.
+Hardware acceleration
+When working with AI, performance issues are inevitable. These problems can arise
+from loading large models or fine-tuning models on massive data sets. Furthermore,
+traditional CPUs struggle to meet the computational demands of modern AI appli-
+cations. Here are some reasons why:
+1. Complexity: AI models, especially deep learning models, involve complex
+mathematical operations that require a large number of calculations. CPUs,
+even high-performance ones, struggle to keep up with these demands.
+Chapter 1: Getting started with Local LLM 39
+2. Scalability: As AI models grow in size and complexity, the computational
+requirements increase exponentially. CPUs become bottlenecks, limiting the
+model’s performance and scalability.
+3. Matrix Operations: Many AI algorithms involve matrix operations (e.g.,
+matrix multiplications), which are not optimized for CPU execution. Special-
+ized hardware accelerators can efficiently handle these operations, reducing
+computation time.
+4. Memory Bandwidth: AI models often require large amounts of memory to
+store weights, biases, and intermediate results. CPUs typically have limited
+memory bandwidth, leading to slow data transfer rates and increased process-
+ing times.
+5. Parallelization: Hardware accelerators like GPUs (Graphics Processing Units)
+or TPUs (Tensor Processing Units) can perform thousands of calculations in
+parallel, whereas CPUs are limited to executing a few dozen instructions at
+once.
+Note that, for studying and developing basic AI concepts, you don’t need any
+special GPU or high-performance hardware (except LLM fine-tuning process). An
+octa-core Intel or AMD processor with 16 GB of RAM is sufficient to test and
+implement AI features such as embedding, image processing, and simple agent-
+based application. While the process may be slower without hardware acceleration,
+it’s still tolerable for educational purposes.
+To overcome these above limitations, you can use following hardware acceleration
+technics, which includes:
+• GPUs: Designed for matrix operations and parallel processing.
+• TPUs: Optimized for deep learning computations, such as convolutional neural
+networks (CNNs).
+• ASICs (Application-Specific Integrated Circuits): Custom-designed chips for
+specific AI tasks, like image or speech recognition. For example, Groq inference
+platform.
+Chapter 1: Getting started with Local LLM 40
+• AVX/AVX2. Advance vector processing from Intel amd AMD.
+By leveraging these specialized hardware accelerators, you can:
+• Reduce computation time: Speed up training and inference times for AI models.
+• Increase model size: Train larger, more complex models without sacrificing
+performance.
+• Improve scalability: Handle large-scale AI deployments with greater efficiency.
+If you urgently need to increase productivity when working with AI, there are several
+options you can consider. In the final section of this chapter, we will provide a
+roadmap to help you address low performance.
+Using a Workstation with GPU
+As we’ve mentioned earlier, GPUs are designed to excel in parallel processing
+tasks, making them highly effective for AI workloads such as training deep learning
+models. With their ability to perform thousands of calculations simultaneously, they
+significantly accelerate computation compared to traditional CPUs.
+If budget permits, investing in a high-performance workstation equipped with a
+dedicated GPU (e.g., NVIDIA RTX or Tesla series) can be a worthwhile investment.
+However, it’s essential to ensure the GPU has sufficient VRAM (Video RAM) to
+handle large datasets and models. While this option is cost-effective, we recommend
+considering other alternatives for general AI use cases.
+If you’re using an older workstation with an Nvidia video card that supports CUDA,
+such as the 2014 MacBook Pro model, you can try enabling GPU acceleration in
+your AI software frameworks like TensorFlow or PyTorch by installing the necessary
+drivers and libraries (including CUDA and cuDNN).
+It’s worth noting that Apple silicon-based MacBooks, including M1/M2/M3 models,
+leverage their onboard GPUs for performing LLM operations. In fact, here’s an
+example output from running Ollama on a MacBook Pro with an M1 processor:
+Chapter 1: Getting started with Local LLM 41
+NAME ID SIZE PROCESSOR UNTIL
+llama3.1:latest 62757c860e01 6.7 GB 100% GPU 4 minutes from now
+Enabling AVX/AVX2 for CPU acceleration
+Advanced Vector Extensions (AVX) and its successor, AVX2, are CPU instruction sets
+that enhance performance for demanding applications, including AI and machine
+learning. They allow the CPU to process multiple data points with a single
+instruction, optimizing computation-heavy tasks.
+Most modern Intel and AMD processors come equipped with AVX/AVX2 support
+out-of-the-box. To check whether your processor supports these advanced instruc-
+tion sets, you can use the following command in Linux:
+grep -o 'avx[^ ]*' /proc/cpuinfo
+Enabling AVX/AVX2 on your processor unlocks significant performance gains,
+especially when running LLM on Ollama. By default, Ollama leverages this option
+to utilize CPU resources more efficiently. Below is a fragment of Ollama log that
+demonstrates its use of AVX/AVX2 extensions while processing LLMs:
+time=2024-08-27T15:17:09.087+03:00 level=INFO source=payload.go:44 msg=\
+"Dynamic LLM libraries [cpu cpu_avx cpu_avx2]"
+Enabling AVX/AVX2 is the most cost-effective option to improved overall system
+performance without the need for additional hardware.
+Using 3rd party ASIC platform or VPS with GPU support
+Application-Specific Integrated Circuits (ASICs) are custom-built hardware opti-
+mized for specific tasks, such as AI and deep learning. They offer superior perfor-
+mance and energy efficiency for AI workloads. Groq is a pioneer in leveraging ASIC
+technology for their inference platform. Groq provides a free API for developers to
+utilize their language models, offering flexibility without upfront costs. While there
+Chapter 1: Getting started with Local LLM 42
+are some usage limits in place – including rates per minute, day, and token count
+– these restrictions are currently quite generous and should suffice for individual
+users’ daily needs.
+Alternatively, Virtual Private Servers (VPS) with GPU support provide access to
+powerful computational resources without needing to purchase and maintain your
+own hardware. Examples include Google’s TPU (Tensor Processing Unit) service,
+AWS with NVIDIA GPUs, or other cloud providers like Azure and IBM Cloud.
+Configure your AI environment on these platforms, ensuring you utilize the available
+resources effectively.
+Using Google Colab or Kaggle service
+Google Colab and Kaggle Kaggle are free cloud-based platforms that provide access
+to powerful computational resources, including GPUs and TPUs. They are ideal
+for individuals and small teams who need high performance without investing in
+expensive hardware.
+Simply sign up for Google Colab or Kaggle. You can write and execute Jupyter
+notebooks directly in your browser. Both platforms offer pre-installed libraries
+and seamless integration with popular deep learning frameworks like TensorFlow,
+PyTorch, and Keras. They also provide options to use GPU and TPU acceleration
+with a few clicks.
+These third-party services have their own limitations, and using them with personal
+datasets can potentially lead to data leakage.
+By implementing these strategies, you can significantly enhance the performance of
+AI tasks, making your workflows more efficient and reducing the time needed for
+training and deploying AI models.
+Conclusion
+In this chapter, we explored the foundational steps for setting up and optimizing
+local LLMs for AI programming. From installing essential tools and configuring
+environments to generating access tokens, these preparatory tasks ensure a smooth
+transition into AI development. The practical example of developing a Python
+Chapter 1: Getting started with Local LLM 43
+application using a local LLM not only reinforces the learning but also demonstrates
+the potential of these models in real-world scenarios.
+We also covered troubleshooting common errors, emphasizing the importance of
+properly setting up and managing dependencies and configurations. As AI models
+become more complex, hardware acceleration plays a key role. Using specialized
+hardware like GPUs and TPUs, or optimizing CPUs with AVX/AVX2 instructions
+can greatly improve the performance and scalability of AI tasks.
+Lastly, we discussed various solutions to boost productivity, from using dedicated
+workstations to cloud-based services, providing a roadmap for overcoming perfor-
+mance bottlenecks. With these insights, you’re now equipped to embark on more
+complex AI projects, leveraging the power of local LLMs and
