@@ -82,9 +82,7 @@ def process_image(image_file_path, prompt):
 
 ```
 !pip install ollama
-
 export OLLAMA_HOST="192.168.1.124"
-
 Processing ./Text2SQL.png file 
 ```
 
