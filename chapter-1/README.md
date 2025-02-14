@@ -5,9 +5,6 @@ This chapter introduces the concept of working with local Large Language Models 
 
 ## Key Themes
 
-- **Personal Motivation:** 
-  - The author shares a memorable experience from a summer vacation in Sharm-el-Sheikh, Egypt, drawing a parallel between venturing into scuba diving and diving into Generative AI. The key lesson is to take the first step despite initial apprehensions.
-
 - **Advantages of Local LLMs:**
   - **Fine-tuning:** Easier customization for complex, task-specific use cases.
   - **Privacy and Security:** Provides control over sensitive data without sharing with third-party providers.

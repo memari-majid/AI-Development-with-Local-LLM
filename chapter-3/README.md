@@ -39,7 +39,7 @@ Implementing RAG in a private company typically involves:
 
 ## Step-by-Step Example
 The chapter provides a detailed example that illustrates how to build a basic RAG system using:
-- **LLM Runner:** Ollama with the LLaMA3.1 model.
+- **LLM Runner:** Ollama with the LLaMA3 model.
 - **Embedding Model:** all-MiniLM-L6-v2 for generating embeddings.
 - **Vector Database:** SQLiteVSS for storage and retrieval.
 - **Framework:** LangChain to orchestrate document loading, splitting, embedding, and query handling.
