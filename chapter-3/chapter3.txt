@@ -1,0 +1,579 @@
+Chapter 3: RAG, enrich LLM
+models with private datasets
+RAG (Retrieval-Augmented Generation) is an approach in AI within natural language
+processing that enhances the capabilities of LLM models by integrating them with a
+retrieval system. This technique enables an LLM model to dynamically access and
+utilize external information from a knowledge base, such as Wikipedia or a corporate
+Confluence, during the generation process.
+In other words, RAG models allow pre-trained LLMs to retrieve information from
+large warehouse, custom datasets, or databases, and incorporate it into the generation
+process.
+In this chapter, we’ll explore how to use Retrieval-Augmented Generation (RAG) for
+building more effective and engaging conversational AI applications. We’ll cover the
+basics of RAG, its benefits, and provide step-by-step instructions on how to develop
+your own RAG mechanism for local use.
+RAG vs fine-tuning LLMs
+Fine-tuning an LLM (Large Language Model) involves adjusting its pre-training for
+a specific task. Initially, an LLM is trained on a massive dataset to learn general
+language patterns. This process is followed by further training on a narrower dataset
+tailored to a particular application, such as customer service or code generation.
+In contrast, RAG is useful when you need your LLM to generate responses based
+on large amounts of updated and context-specific data. For instance, enriching the
+response of an LLM model with datasets from your data-lake or archive documents.
+RAG offers a cost-efficient alternative to fine-tuning due to its minimal resource and
+technical knowledge requirements. With just 10 lines of Python code, you can ensure
+that your model has access to the most relevant and up-to-date data.
+Chapter 3: RAG, enrich LLM models with private datasets 95
+Most of the LLM runner client like Open WebUI or AnythingLLM already incorporate
+RAG features.
+Let’s try a quick example. To get started, open the Open WebUI and give a prompt:
+Who is the author of the book "The apache Ignite book"?
+The response should be very similar to this one.
+A very specific question!
+After conducting a quick search, I found that the book "Apache Ignite C\
+ookbook" (not"The Apache Ignite Book") has several authors. However, I
+couldn't find any information on a single author for a book with the t
+itle "The Apache Ignite Book"
+.
+That being said, it's possible that the book you're thinking of is actu\
+ally the online documentation or tutorial provided by the Apache Ignite
+project itself, rather than a traditional book.
+If you could provide more context or details about the book you're look\
+ing for, I'd be happy to try and help you further.
+I’m not happy with the answer, so let’s provide more context to our LLM model by
+uploading a relevant file from the book’s web page. To do this, click on the + icon in
+the prompt message box, select More, and then choose the file you’d like to upload.
+Prompt will be the same as before Who is the author of the book "The apache
+Ignite book"?
+After processing the file for a few seconds, you can expect to see a specific result,
+which is outlined below.
+The authors of the book "The Apache Ignite book" are Shamim Bhuiyan and\
+Michael Zheludkov.
+For personal use, yes, that seems sufficient. However, for medium-sized private
+companies, having a customized Retrieval, Analysis, and Generation (RAG) system
+might be necessary to efficiently upload, retrieve, and process information from
+documents using LLMs.
+Chapter 3: RAG, enrich LLM models with private datasets The entire RAG mechanism can be summarised as follows:
+96
+Figure 3.1
+Key concepts of RAG
+To build a local RAG system, you’ll need the following components.
+1. Sources. Source documents, it might be .doc, txt or pdf files located your
+network.
+2. Loader. A loader which will load and split the documents into chunks..
+3. Transform. Transform the chunk for embedding.
+4. Embedding model. Embedding model takes the input as a chunk and outputs
+an embedding as a vector representation.
+5. Vector DB. Vector database for storing embedding.
+6. LLM model. Pre-trained model which will use the embedding to answer the
+user query.
+Embeddings
+As we covered earlier in chapter 2 that, embedding is a mathematical representation
+of data, like words or images, in a high-dimensional space. These representations
+Chapter 3: RAG, enrich LLM models with private datasets 97
+capture the semantic meaning or features of the data, making it easier for machine
+learning models to process and understand complex inputs.
+An embedding is essentially a list of numbers (a vector) that represents an item, like a
+word, in a multi-dimensional space. Embeddings represent not just the surface form
+of the data (e.g., a word) but also its meaning and context.
+Embeddings in RAG are most commonly used for providing text similarity. For
+example, word embeddings can help find similar words, such as lion and tiger, which
+have embeddings that are close to each other in the vector space.
+Tip
+For more details and examples on embeddings, please refer to Chapter 2.
+Vector database
+A vector database, also known as a similarity search engine, is a specialized database
+designed to store and efficiently retrieve vectors. These databases are optimized for
+performing nearest neighbour searches (i.e., finding the most similar item based on
+their embeddings) in high-dimensional vector spaces. Unlike traditional relational
+databases, vector databases can compare vectors directly without needing explicit
+queries about attributes.
+Key Characteristics of a Vector Database:
+• Stores embeddings: Instead of storing raw data (like text or images), it stores
+the vector representations (embeddings) of this data.
+• Specialized indexing: Uses techniques like HNSW (Hierarchical Navigable
+Small World graphs) or FAISS (Facebook AI Similarity Search) to index and
+search for similar vectors efficiently.
+• Scalability: Can handle millions or billions of vectors and perform fast
+similarity searches even in high-dimensional spaces.
+Chapter 3: RAG, enrich LLM models with private datasets 98
+Let’s say, you have a database of movie descriptions stored as embeddings. When
+you input the embedding of a new movie description, the vector database can quickly
+find similar movies based on their descriptions.
+Let’s go by an example:
+• Movie A: “A notorious pirate characterized by his slightly drunken swagger”
+– Embedding: [0.9, 0.1, 0.8, …]
+• Movie B: “A pirate who wants to confront Jack for stealing her ship.”
+– Embedding: [0.85, 0.15, 0.75, …]
+If you query the database with the embedding of Movie A, it will also return Movie B
+because their embeddings are close in the vector space, indicating they have similar
+content.
+Vector databases can be used in various scenarios:
+• Semantic Search: For example, when you search for artificial intelligence in a
+document database, the vector database can find documents that contain related
+topics like machine learning or neural networks.
+• Image Retrieval: Find similar images based on their visual features, such as
+finding all images of dogs in a large photo collection.
+• Recommendation Systems: Quickly find and recommend products, articles,
+or media similar to what a user is interested in.
+Chapter 3: RAG, enrich LLM models with private datasets 99
+Figure 3.2
+In RAG, vector database is commonly used for semantic search. Popular vector
+databases are:
+1. Milvus
+2. Chroma
+3. Pinot
+4. Weaviate
+Since vector databases enable semantic and similarity searches over stored vectors,
+let’s explore semantic search in more detail.
+Semantic Search
+Semantic search is an advanced search technique that leverages the meaning and
+context of words to deliver more relevant results. This type of search interprets the
+intent behind a user’s query by understanding the meaning of the words and their
+context, rather than just looking for exact matches. It aims to find information that
+is conceptually relevant to the query, even if it doesn’t contain the exact keywords.
+Chapter 3: RAG, enrich LLM models with private datasets 100
+Figure 3.3
+Figure 3.3 (generated by the Embedding Projector by Tensor flow) illustrates the
+relationship between animals like lions and tigers, which can be queried using
+semantic search.
+Semantic search often uses AI models, like transformers or other NLP models, to
+understand and process natural language queries. These models are capable of
+capturing the nuances of human language, such as synonyms, related concepts, and
+the context of words.
+Imagine you’re searching for a Big red car in a rental system. The expected results
+would include cars that fit that description, such as a Ferrari or a Lamborghini. In this
+example, the semantic search engine understands the meaning behind your query
+and delivers relevant results based on the context and intent of your search, rather
+than just matching the exact words.
+Think of it like this:
+Chapter 3: RAG, enrich LLM models with private datasets 101
+• Exact search: Find a car that matches 'big red car' (only finds cars with
+those exact words).
+• Semantic search: Find a car that is big and red" (finds cars that match the
+description, even if they don’t have the exact words).
+Key benefits of Semantic Search:
+• Improved Relevance: By focusing on meaning and context, semantic search
+delivers results that are more aligned with the user’s intent, improving the
+relevance of search results.
+• Handling Synonyms and Polysemy: Semantic search can understand that
+different words might have the same meaning (synonyms) or that the same
+word can have different meanings in different contexts (polysemy), providing
+more accurate results.
+• Contextual Understanding: It can consider the context in which words are used,
+making it effective for complex queries where traditional search might fail to
+capture the nuances.
+How semantic search is different from full text search?
+Semantic Search and Full Text Search are two different approaches for searching text
+data. While they share some similarities, there are key differences between them.
+Full Text Search:
+• Searches for exact matches of words or phrases within a document.
+• Typically uses keyword-based matching algorithms (e.g., exact match, prefix
+matching).
+• Focuses on literal meaning of the search query.
+• Often used in scenarios where accuracy is crucial (e.g., search engines, database
+queries).
+Semantic Search:
+• Searches for matches based on meaning and context rather than literal words.
+Chapter 3: RAG, enrich LLM models with private datasets 102
+• Uses natural language processing (NLP) and machine learning-based algo-
+rithms to understand the query’s intent.
+• Can handle complex queries, synonyms, antonyms, and other relationships
+between concepts.
+• Typically used in scenarios where accuracy is important but not as critical as
+speed (e.g., e-commerce search, customer support)
+Key differences between Full Text Search and Semantic Search:
+• Matching criteria: Full Text Search relies on exact matching of words, while
+semantic search uses similarity metrics to match the meaning.
+• Query complexity: Semantic search can handle more complex queries with
+multiple keywords or entities, whereas full text search is often limited to simple
+queries.
+• Contextual understanding: Semantic search takes into account the context and
+relationships between concepts, whereas full text search focuses solely on literal
+matching.
+Now that we have a solid understanding of the integral parts of the mechanism, let’s
+return to the use case of RAG and its implementation.
+Real world use cases of using RAG
+For private companies, RAG can be a game-changer, enabling them to improve
+operational efficiency, enhance customer experience, and gain a competitive edge.
+Here are some potential use cases for RAG in a private company:
+1. Knowledge base management. In large organizations, employees often
+require rapid access to internal documentation, including policies, training
+materials, and project reports. A RAG model can be implemented to quickly
+retrieve and summarize relevant information from these documents, providing
+hyperlinks for easy reference. Such a process will help the organizations
+streamline their internal knowledge discovery process and saving employees
+time.
+Chapter 3: RAG, enrich LLM models with private datasets 103
+2. Technical support for engineering teams. Engineering teams can leverage
+RAG models to support technical queries by instantly retrieving relevant code
+snippets, documentation, or past project insights from internal repositories.
+This enables faster problem-solving, facilitates knowledge sharing within the
+team, and ultimately streamlines project development and troubleshooting
+processes.
+3. Employee onboarding. Human Resources teams can utilize RAG to simplify
+the onboarding process by generating tailored onboarding materials and in-
+stantly retrieving relevant policies, training content, and employee benefits
+information specific to each new hire. This enables HR teams to provide new
+hires with all the necessary information in a timely manner, resulting in a more
+seamless and efficient onboarding experience.
+4. Content personalization. Marketing teams can harness the power of RAG
+to create personalized content for email campaigns, social media posts, and
+product descriptions by leveraging relevant information from customer data,
+previous interactions, and product catalogs. By instantly retrieving and in-
+corporating specific customer details or preferences into marketing materials,
+marketers can craft more effective and targeted campaigns that resonate with
+their audience.
+5. Customer support. The most common use case for RAG is enhancing a
+company’s chatbot system with advanced customer support capabilities. By
+integrating a RAG model with a comprehensive knowledge base that includes
+product manuals, troubleshooting guides, and FAQs, companies can provide
+customers with accurate, context-aware responses to their queries in real-time.
+This enables faster response times, improved customer satisfaction, and a more
+seamless overall experience.
+Implementing RAG in a private company
+To successfully implement RAG in your organization, you’ll need to take a structured
+approach that covers all the necessary steps, from setting up the required infrastruc-
+ture to integrating the RAG model into specific workflows. Here’s a step-by-step
+guide on how to implement RAG in a private company:
+Chapter 3: RAG, enrich LLM models with private datasets 104
+Figure 3.4
+1. Define business requirenments: To get started with implementing RAG, first
+identify the specific business need or problem that it can address. Common use
+cases include enhancing customer support, automating content creation, and
+improving internal knowledge management. For example, if your company
+wants to improve its customer support, you might consider using RAG to
+automatically generate accurate, context-aware responses to customer queries
+by combining existing documentation with AI-driven insights.
+Chapter 3: RAG, enrich LLM models with private datasets 105
+2. Budget, timeline and resources: To estimate the budget and timeline for
+implementing the RAG project, you must consider several key factors. Specif-
+ically, involving a data scientist or machine learning engineer with expertise
+in natural language processing. Project costs may vary significantly depending
+on specific company needs, technology requirements, available resources, and
+locations.
+3. Organize data: To prepare your RAG model for optimal performance, collect
+all relevant documents, datasets, and knowledge bases that it will need to
+draw upon for information. This may include product manuals, customer
+interaction logs, internal company documents, or any other type of structured
+or unstructured data. Ensure that the collected data is well-organized, properly
+labeled, and stored in a format that’s easy to access. If necessary, perform data
+cleaning to remove irrelevant or outdated information that could compromise
+the model’s accuracy.
+4. Select LLM and build a RAG system/Fine tune a LLM model:
+• Choose an off-the-shelf or custom-built LLM that can handle natural
+language processing task: Google’s Gemma, Meta’s LLaMA or Mistral.
+• To ensure that your RAG model can effectively retrieve relevant infor-
+mation, implement or select a retrieval system that can efficiently search
+and return matching documents based on a query. You may need to set
+up a vector database or leverage existing search infrastructure such as
+Elasticsearch to support this capability. Once you’ve chosen a retrieval
+system, integrate it with your data sources to enable seamless access to
+relevant information.
+• Depending on your specific use case, you may need to fine-tune a Large
+Language Model (LLM) to achieve optimal performance. For instance,
+if you’re developing a customer support chatbot, this process can be
+particularly important. Fine-tuning an LLM model can add complexity and
+cost to your project, but it’s often a necessary step to ensure that the model
+is tailored to your specific needs. In such cases, the benefits of fine-tuning
+can include improved accuracy, more effective responses and enhanced
+overall performance.
+5. Optimize and extend the system: After successfully implementing the initial
+RAG system, consider exploring new use cases or expanding its capabilities
+Chapter 3: RAG, enrich LLM models with private datasets 106
+to cover more data sources and languages. Some potential next steps might
+include scaling the system to handle increased query volumes, integrating
+additional datasets to provide richer insights or deploying it across different
+departments within the company. This could involve a range of activities, such
+as:
+• Expanding the system’s language support to reach new customer segments.
+• Integrating data from multiple sources to create a unified view of business
+operations.
+• Deploying the RAG system in new business units or departments to drive
+process improvements and efficiency gains.
+6. Ensure complaince and squerity: To ensure that your RAG system meets
+the highest standards of data protection and security, make sure it complies
+with relevant regulations and internal companies policies, particularly when
+handling sensitive corporate information. Key measures to take include im-
+plementing robust data encryption, access controls, and compliance checks to
+safeguard against unauthorized access or misuse. Regularly auditing the system
+will also help ensure that it continues to adhere to all relevant standards and
+regulations. This will involve:
+• Conducting regular security assessments to identify potential vulnerabili-
+ties.
+• Implementing data protection policies and procedures that meet regulatory
+requirements.
+• Ensuring that sensitive corporate data is handled in accordance with
+company-wide security protocols.
+7. Train employees and gather feedback: To ensure employees can effectively
+interact with and get value from the RAG system, provide them with com-
+prehensive training and support. This might involve conducting workshops
+or hands-on-lab that explains how to use the system, including best practices
+for getting the most out of its features. Additionally, encourage users to
+provide feedback on their experiences with the system, including any issues
+they encounter or suggestions for improvement.
+Chapter 3: RAG, enrich LLM models with private datasets 107
+Info
+Note that, the implementation steps outlined above may need to be tailored
+to meet the specific requirements of your company. In addition, certain
+steps such as integrating RAG with your internal CRM system or help
+desk could potentially be added in future iterations.
+Step-by-Step Example: Loading, retrieving,
+and processing custom documents with LLM
+In this section, we will develop a basic RAG system that can load and retrieve data
+from a text file. The retrieved information will then be processed by a LLM to
+summarize user queries. Before we proceed with the example, let’s take a moment
+to review the key components we’ll be working with.
+1. LLM runner: Ollama
+2. LLM model: LLama 3 8b
+3. Embedding model: all-MiniLM-L6-v2
+4. Vector database: SQLiteVSS (sqlite3)
+5. Framework: LangChain
+6. Operating system: macOS
+7. Programming language: Python 3.11.3
+The figure below (Figure 3.5) illustrates all the components used in this example.
+Chapter 3: RAG, enrich LLM models with private datasets 108
+Figure 3.5
+The instructions and example I’ll be using are available in the GitHub repository.
+To run the example, you should have a pre-configured Python environment. Please
+follow the instruction from the chapter 1 to install and configured Python sandbox.
+However, I’ll walk you through each necessary step to save time and effort.
+Step 1. Install sqlite3
+For installation and configuration instructions, please refer to the appropriate section
+in Chapter 1.
+Tip
+Alternatively to SQLiteVSS, you can use other vector databases such as
+Milvus or Chroma.
+Step 2. Install necessary package
+Add a new notebook in your local jupyter lab. Add the first cell with the following
+code which will install all the necessary packages.
+Chapter 3: RAG, enrich LLM models with private datasets 109
+#install necessary package
+!pip install --upgrade langchain
+!pip install -U langchain-community
+!pip install -U langchain-huggingface
+!pip install sentence-transformers
+!pip install --upgrade --quiet sqlite-vss
+!pip install --upgrade --quiet pypdf
+Step 3. Import all the packages
+from langchain.embeddings.sentence_transformer import SentenceTransform\
+erEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import SQLiteVSS
+from langchain_community.document_loaders import PyPDFLoader
+Download the document from the link and place it Jupyter notebook workspace.
+Tip
+clone the entire project from the GitHub repository. You’ll find all the
+related documents stored within the chapter-3 folder.
+Step 4. Load the source document from the directory.
+Chapter 3: RAG, enrich LLM models with private datasets 110
+# Load the document using a LangChain PyPDFLoader
+file_path_pdf="./ignitebook-sample.pdf"
+loader = PyPDFLoader(file_path_pdf)
+pages = loader.load_and_split()
+print ("Page counts: "
+, len(pages))
+After loading the document, it will also print out the total page count.
+Step 5. Split the documents into chunk
+# Split the document into chunks, chunk size is 1k
+text_splitter = CharacterTextSplitter (chunk_size=1000, chunk_overlap=0)
+docs = text_splitter.split_documents(pages)
+texts = [doc.page_content for doc in docs]
+Here, you can print the chunks into console to be sure of parsing the document.
+print (texts)
+Step 6. Embedding the chunks
+# Use the sentence transformer package with the all-MiniLM-L6-v2 embedd\
+ing model embedding_function = SentenceTransformerEmbeddings(model_name
+="all-MiniLM-L6-v2")
+Step 7. Load the embeddings into the sqlite3 database.
+Chapter 3: RAG, enrich LLM models with private datasets 111
+# Load the text embeddings in SQLiteVSS in a table named PyPDFLoader
+db = SQLiteVSS.from_texts(
+texts = texts,
+embedding = embedding_function,
+table = "state_union"
+,
+db_file = "/tmp/vss.db"
+)
+Step 8. Query the database and study the embeddings (optional).
+Use DBeaver or Visual studio code to query the local sqlite3 database. Database file
+of the local db is /tmp/vss.db.
+Figure 3.6
+Step 9. Query a similarity search
+# A similarity/semantic search
+# prompt
+question = "What is Data partitioning in Ignite?"
+data = db.similarity_search(question)
+# print results
+print(data[0].page_content)
+The result should be something similar as shown below:
+Chapter 3: RAG, enrich LLM models with private datasets 112
+Chapter 4. Architecture deep dive 91.
+Sharding: it’s sometimes called horizontal partitioning. Sharding distr\
+ibutes differentdata across multiple servers, so each server act as a s
+ingle source for a subset of data. Shards are called partitionsin Ignit
+e.2. Replication: replication copies data across multiple servers, so e
+ach portion of datacan be found in multiple places. Replicating each pa
+rtition can reduce the chance of a single partition failure and improve
+s the availability of the data.
+TipT here are also two types of partitions available in partitions stra\
+tegy: vertical partitioning and functional partition. A detailed descri
+ption of the separtition in gstrategies is out of the scope of this boo
+k. Usually, there are several algorithms uses for distributing data acr
+oss the cluster, a hashing algorithm is one of them. We will cover the
+Ignite data distribution strategy in this section, which will build a d
+eeper understanding of how Ignite manages data across the cluster. Unde
+rstanding data distribution: DHT As youread in the previous section, Ig
+nite shards are called partitions. Partitions are memory segments that
+can contain a large volume of a dataset, depends on the capacity of the
+RAM of your system. Partition helps you to spread the load over more n
+odes, which reducescontention and improves performance. You can scale o
+ut the Ignite cluster by adding morepartitions that run on different se
+rver nodes. The next figure shows an overview of thehorizontal partitio
+ning or sharding.
+This time, the search engine returns results that are very similar to the sample book
+chapter’s answer, but they aren’t very human-readable. Instead, they consist of
+loosely related text fragments that don’t fully address the question.
+Step 10. Run the Ollama LLM runner.
+ollama run llama3.1
+Step 11. Import the langchain LLM package and connect to the local server.
+Chapter 3: RAG, enrich LLM models with private datasets 113
+# LLM
+from langchain.llms import Ollama
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbac\
+kHandler
+llm = Ollama(
+model = "llama3.1"
+,
+base_url='http://192.168.1.124:11434'
+,
+verbose = True,
+callback_manager = CallbackManager([StreamingStdOutCallbackHandler(\
+)]),
+)
+Info
+Note that, I’m pointing to my Ollama instance running on host
+192.168.1.124. If you’re running Ollama locally, simply change the IP
+address to localhost or remove the base_url parameter.
+Step 12. Use the LangChain prompt to ask a question.
+At these points, you’ll need to set up your LangChain Smith account and obtain an
+API key to proceed with the prompt. If you haven’t already created an account,
+please sign in and retrieve your API key – we’ll be using it later in this section.
+Tip
+To create a new API key, navigate to Settings > API Keys.
+Chapter 3: RAG, enrich LLM models with private datasets 114
+# QA chain
+from langchain.chains import RetrievalQA
+from langchain import hub
+import os
+This above Python code is used to configure a QA (Question Answering) chain using
+the langchain library. Here’s what each line does:
+• The first two lines import specific modules from the langchain library:
+– RetrievalQA: This module provides a pre-built QA chain that uses retrieval-
+based methods (i.e., it searches through a database or knowledge graph to
+find answers).
+– hub: This module is used to access the LangChain hub, which is a platform
+for building and running AI models.
+• The third line imports the built-in os module, which provides functions for
+interacting with the operating system.
+os.environ["LANGCHAIN_API_KEY"] = "ADD_YOUR_KEY_HERE"
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_PROJECT"] = 'default'
+These lines set up environment variables that are necessary for interacting with the
+LangChain API and its features:
+• LANGCHAIN_API_KEY: This sets the API key that is used to authenticate your
+requests with the LangChain service. Add your API key here.
+• LANGCHAIN_TRACING_V2: Setting this to true enables tracing in
+LangChain, which is useful for debugging and monitoring the performance of
+your chains.
+• LANGCHAIN_ENDPOINT: This sets the endpoint URL to
+https://api.smith.langchain.com that the LangChain API calls will be
+sent to. The endpoint is where the LangChain services are hosted.
+• LANGCHAIN_PROJECT: This sets the project name in LangChain, which
+helps in organizing and managing different chains and models. The default
+project name is set to default.
+Chapter 3: RAG, enrich LLM models with private datasets 115
+QA_CHAIN_PROMPT = hub.pull("rlm/rag-prompt-llama")
+qa_chain = RetrievalQA.from_chain_type(
+llm,
+context
+# we create a retriever to interact with the db using an augmented \
+retriever = db.as_retriever(),
+chain_type_kwargs = {"prompt": QA_CHAIN_PROMPT},
+)
+This Python code sets up a Question-Answering (QA) chain using LangChain, and
+it uses a specific prompt template for the QA chain. Here’s a detailed breakdown of
+each part:
+• hub.pull("rlm/rag-prompt-llama"): This line retrieves a specific prompt
+template from the LangChain hub. The hub.pull function is used to pull
+resources like pre-built models, prompt templates, or other components that
+are available in LangChain’s ecosystem.
+• rlm/rag-prompt-llama: This is the identifier for the specific prompt template.
+The prompt template helps structure the inputs to the language model to
+optimize the quality of the answers it generates.
+• RetrievalQA.from_chain_type: This is a method used to create a QA chain by
+specifying the type of chain you want to build. The from_chain_type method
+allows you to customize the behavior of the QA chain, including the language
+model (LLM) to use, the retriever, and other parameters.
+• llm: This is the language model (LLM) that will be used for generating answers.
+In our case, LLM model is llama3.1.
+• retriever=db.as_retriever(): This specifies the retriever component of the
+QA chain. The db.as_retriever() part indicates that a database (db) is being
+used to retrieve relevant documents or information in response to a query. The
+retriever’s role is to find and return the most relevant information from the
+database, which will then be used by the LLM to generate the final answer.
+• chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}: This argument passes
+additional configuration parameters to the chain. In this case, it specifies the
+prompt template (QA_CHAIN_PROMPT) that was retrieved earlier. This prompt
+Chapter 3: RAG, enrich LLM models with private datasets 116
+will be used to structure the input to the LLM, guiding it in generating accurate
+and relevant answers.
+Step 13. Print the result.
+Now, let’s run the question What is data partitioning in Ignite? again and
+provide the answer to the LLM for composition.
+result = qa_chain({"query": question})
+This prints the query result. The query result should be something as follows:
+Data partitioning in Ignite refers to the process of dividing data into\
+smaller, independent segments called partitions. These partitions are
+then distributed across multiple servers or nodes within a cluster. Thi
+s approach helps reduce contention and improves performance by spreadin
+g the load over more nodes. Partitions can contain a large volume of da
+ta, depending on the capacity of the RAM of each system.
+Warning:
+It may take a few minutes to respond, depending on your computer
+resources.
+In this process, the RAG system first retrieves relevant information from an external
+vector database. Then, this information is combined with the original query,
+providing the LLM with additional context to generate a more accurate and up-to-
+date response. The LLM processes both the query and the retrieved data to produce
+a coherent, informed answer as the final output.
+In this way, RAG combines the strengths of retrieval (access to external knowledge)
+and generation (language fluency) to deliver more reliable and contextually accurate
+responses.
+Chapter 3: RAG, enrich LLM models with private datasets 117
+The complete source code is available in the GitHub repository. In this example,
+we demonstrate the entire RAG process from scratch. However, there are high-
+level frameworks like LlamaIndex, that enable LLMs to interact with structured and
+unstructured data more effectively, simplifying the retrieval, processing, and use of
+this information when generating responses.
+You can use this codebase as a basic example of RAG and customize it for your
+specific needs, such as adding a scheduler to scan external sources for documents or
+connecting to Kafka or Redpanda to process incoming documents in near real-time
+with LLMs. While we couldn’t cover every detail of RAG in this book, we frequently
+explore additional use cases for LLMs with examples on our blog. Be sure to check
+it out for more information.
+Conclusion
+In this chapter, we have explored the concept of RAG and its potential applications
+in various domains. We started by discussing the limitations of traditional LLMs and
+how RAG models can address them by incorporating external knowledge into their
+responses.
+Furthermore, we discussed potential use cases for RAG in a private company setting,
+including knowledge base management, technical support for engineering teams,
+and employee onboarding.
+We walked through an example implementation using Ollama as the LLM runner, all-
+MiniLM-L6-v2 as the embedding model, and SQLiteVSS as the vector database. This
+example showcased how RAG can be used to load and retrieve custom documents
+from a text file, process them with a LLM, and generate tailored responses.
