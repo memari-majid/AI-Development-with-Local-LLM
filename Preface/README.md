@@ -128,16 +128,3 @@ def process_image(image_file_path, prompt):
 export OLLAMA_HOST="192.168.1.124"
 Processing ./Text2SQL.png file
 ```
-
-> **💡 Tip**  
-> This icon signifies a tip, suggestion.
-
-> **⚠️ Warning**  
-> This icon indicates a warning or caution.
-
-> **ℹ️ Info**  
-> This icon signifies general note.
-
-## Reader Feedback
-
-We would like to hear your comments such as what you think, like or dislike about the content of the book. Your feedback will help us to write a better book and help others to clear all the concepts.
